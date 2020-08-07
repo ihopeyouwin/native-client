@@ -1,9 +1,19 @@
+import 'react-native-gesture-handler';
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, View, FlatList} from 'react-native';
-import {AddTodo} from './src/common/AddTodo';
-import {HeaderElement} from './src/common/Header';
-import {Todo} from './src/Todo';
-import {Button} from 'react-native-elements';
+import { NavigationContainer } from '@react-navigation/native';
+import { navigationRef } from './src/shared/RootNavigation';
+import {createStackNavigator} from '@react-navigation/stack';
+import {AuthContext} from './src/authContext';
+import {StyleSheet} from 'react-native';
+import {HeaderElement} from './src/shared/UIElements/Header';
+import {ThemeProvider} from 'react-native-elements';
+import Landing from './src/pages/LandingPage';
+import Wallets from './src/pages/WalletsPage';
+import Transactions from './src/pages/TransactionsPage';
+import AuthPage from './src/pages/AuthPage';
+import {useAuthenticate} from './src/shared/Hooks/authHook';
+import BtnGroup from './src/shared/UIElements/ButtonGroup';
+
 
 const theme = {
   colors: {
@@ -11,36 +21,17 @@ const theme = {
     secondary: 'pink',
     success: 'pink'
   },
-  Button: {},
+  buttonMedium: {
+    padding: 12,
+    width: '72%',
+    backgroundColor: '#fe8864'
+  },
 };
 
-
+export const Stack = createStackNavigator();
 export default function App() {
-  const [todos, setTodos] = useState([
-    {id:1, title: 'test'},
-    {id:2, title: 'test'},
-    {id:3, title: 'test'},
-    {id:4, title: 'test'},
-    {id:5, title: 'test'},
-    {id:6, title: 'test'},
-    {id:7, title: 'test'},
-    {id:8, title: 'test'},
-    {id:9, title: 'test'},
-    {id:10, title: 'test'},
-    {id:11, title: 'test'},
-    {id:12, title: 'test'},
-    {id:13, title: 'test'},
-    {id:14, title: 'test'},
-    {id:15, title: 'test'},
-    {id:16, title: 'test'},
-    {id:91, title: 'test'},
-    {id:17, title: 'test'},
-    {id:18, title: 'test'},
-    {id:121, title: 'test'},
-    {id:132, title: 'test'},
-    {id:141, title: 'test'},
-    {id:151, title: 'test'}
-  ])
+  const { token, login, logout, userId } = useAuthenticate();
+  const [todos, setTodos] = useState([])
 
   const addTodo = (title) => {
     const newTodo = {
@@ -57,20 +48,38 @@ export default function App() {
   const getTodos = (todos) => {
     return [...todos].reverse()
   }
-
+  const removeTodo = (id) => {
+    setTodos(prev => prev.filter(todo => todo.id !== id))
+  }
+  const forFade = ({ current }) => ({
+    cardStyle: {
+      opacity: current.progress,
+    },
+  });
   return (
-    <View>
-      <HeaderElement/>
-      <View style={s.container}>
-        <AddTodo onSubmit={addTodo} theme={theme}/>
-        <FlatList
-          data={getTodos(todos)}
-          renderItem={({item}) => <Todo todo={item}/>}
-          keyExtractor={item => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </View>
+    <ThemeProvider theme={theme}>
+      <AuthContext.Provider value={{ isLoggedIn: !!token, token: token, userId: userId, login: login, logout: logout }}>
+        <HeaderElement/>
+        <NavigationContainer ref={navigationRef}>
+          <Stack.Navigator screenOptions={{ headerShown: false, cardStyleInterpolator: forFade }}>
+            <Stack.Screen name="Home" component={Landing}/>
+            <Stack.Screen name="Wallets" component={Wallets}/>
+            <Stack.Screen name="Transactions" component={Transactions}/>
+            <Stack.Screen name="AuthPage" component={AuthPage}/>
+          </Stack.Navigator>
+          <BtnGroup/>
+        </NavigationContainer>
+        {/*        <View style={s.container}>
+          <AddTodo onSubmit={addTodo}/>
+          <FlatList
+            data={getTodos(todos)}
+            renderItem={({item}) => <Todo todo={item} onRemove={removeTodo}/>}
+            keyExtractor={item => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>*/}
+      </AuthContext.Provider>
+    </ThemeProvider>
   );
 }
 
