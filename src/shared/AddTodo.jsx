@@ -1,14 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {StyleSheet, Text, View, TextInput, Alert} from 'react-native';
 import { Button, ThemeProvider } from 'react-native-elements';
+import { ThemeContext } from 'react-native-elements';
 
-const buttonStyle = {
-  padding: 12,
-  width: '72%'
-}
-
-export const AddTodo = ({ theme, onSubmit}) => {
-  const [inputValue ,setInputValue] = useState('')
+export const AddTodo = ({onSubmit}) => {
+  const [inputValue ,setInputValue] = useState('');
+  const { theme } = useContext(ThemeContext);
 
   const pressHandler = () => {
     if(inputValue.trim()){
@@ -19,7 +16,6 @@ export const AddTodo = ({ theme, onSubmit}) => {
     }
   }
   return (
-    <ThemeProvider theme={theme}>
       <View>
         <View style={s.block}>
           <TextInput
@@ -30,12 +26,11 @@ export const AddTodo = ({ theme, onSubmit}) => {
           />
           <Button
             onPress={pressHandler}
-            buttonStyle={buttonStyle}
+            buttonStyle={theme.buttonMedium}
             title='Add'
           />
         </View>
       </View>
-    </ThemeProvider>
   )
 }
 
