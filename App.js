@@ -31,26 +31,7 @@ const theme = {
 export const Stack = createStackNavigator();
 export default function App() {
   const { token, login, logout, userId } = useAuthenticate();
-  const [todos, setTodos] = useState([])
 
-  const addTodo = (title) => {
-    const newTodo = {
-      id: Date.now().toString(),
-      title: title
-    }
-
-    setTodos((prev) => [...prev, {
-        id: Date.now().toString(),
-        title
-      }]
-    )
-  }
-  const getTodos = (todos) => {
-    return [...todos].reverse()
-  }
-  const removeTodo = (id) => {
-    setTodos(prev => prev.filter(todo => todo.id !== id))
-  }
   const forFade = ({ current }) => ({
     cardStyle: {
       opacity: current.progress,
