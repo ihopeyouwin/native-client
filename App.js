@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './src/shared/RootNavigation';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from './src/authContext';
-import {StyleSheet} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {HeaderElement} from './src/shared/UIElements/Header';
 import {ThemeProvider} from 'react-native-elements';
 import Landing from './src/pages/LandingPage';
@@ -13,6 +13,7 @@ import Transactions from './src/pages/TransactionsPage';
 import AuthPage from './src/pages/AuthPage';
 import {useAuthenticate} from './src/shared/Hooks/authHook';
 import BtnGroup from './src/shared/UIElements/ButtonGroup';
+import { CategoryButton } from './src/shared/UIElements/CategoryCard';
 
 
 const theme = {
@@ -31,7 +32,9 @@ const theme = {
 export const Stack = createStackNavigator();
 export default function App() {
   const { token, login, logout, userId } = useAuthenticate();
-
+  const testing =()=> {
+    console.log(2+'123')
+  }
   const forFade = ({ current }) => ({
     cardStyle: {
       opacity: current.progress,
